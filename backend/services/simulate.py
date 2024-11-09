@@ -14,16 +14,16 @@ def deal_opponents(n: int, deck: Deck) -> List[Hand]:
     return opponents
 
 
-def fill_board(deck: Deck, board: List[int], stage: int):
-    for i in range(stage - len(board)):
-        board.append(deck.draw(1))
-    return board
-
+def fill_board(deck: Deck, board: List[int]) -> List[int]:
+    current_board = board.copy()
+    while len(current_board) < 5:
+        drawn_card = deck.draw(1)[0]
+        current_board.append(drawn_card)
+    return current_board
 
 def simulate(
     player_hand: Hand,
     num_opponents: int,
-    stage: int,
     board: List[int],
     trials=10000,
 ):
@@ -38,7 +38,7 @@ def simulate(
         ]
 
         # Fill board and deal in opponents
-        current_board = fill_board(deck=deck, board=board.copy(), stage=stage)
+        current_board = fill_board(deck=deck, board=board.copy())
         opponents = deal_opponents(n=num_opponents, deck=deck)
 
         player_score = evaluator.evaluate(current_board, player_hand.cards)
@@ -57,15 +57,13 @@ def simulate(
 
 
 def main():
-    player_hand = Hand([Card.new("As"), Card.new("Ks")])
-    board = [Card.new("2h"), Card.new("7d"), Card.new("9c")]
+    player_hand = Hand([Card.new("2c"), Card.new("7c")])
+    board = []
 
     num_opponents = 3
-
-    stage = 3
     trials = 10000
 
-    win_probability = simulate(player_hand, num_opponents, stage, board, trials)
+    win_probability = simulate(player_hand, num_opponents, board, trials)
 
     print(f"Win probability: {win_probability * 100:.2f}%")
 
