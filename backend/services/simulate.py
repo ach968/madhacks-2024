@@ -14,12 +14,10 @@ def deal_opponents(n: int, deck: Deck) -> List[Hand]:
     return [Hand(deck.draw(2)) for _ in range(n)]
 
 
-def fill_board(deck: Deck, board: List[int]) -> List[int]:
-    current_board = board.copy()
-    while len(current_board) < 5:
-        drawn_card = deck.draw(1)[0]
-        current_board.append(drawn_card)
-    return current_board
+def fill_board(deck: Deck, board: List[int], stage: int) -> List[int]:
+    for _ in range(stage - len(board)):
+        board.append(deck.draw(1))
+    return board
 
 
 def single_trial(
@@ -51,38 +49,6 @@ def single_trial(
 def simulate(
     player_hand: Hand,
     num_opponents: int,
-    board: List[int],
-    trials=10000,
-):
-    wins = 0
-
-    evaluator = Evaluator()
-    wins = 0
-    for _ in range(trials):
-        deck = Deck()
-        deck.cards = [
-            card for card in deck.cards if card not in player_hand.cards + board
-        ]
-
-        current_board = fill_board(deck, board.copy(), stage)
-        opponents = deal_opponents(num_opponents, deck)
-
-        player_score = evaluator.evaluate(player_hand.cards, current_board)
-        win = True
-        for opponent in opponents:
-            opponent_score = evaluator.evaluate(opponent.cards, current_board)
-            if opponent_score < player_score:
-                win = False
-                break
-        if win:
-            wins += 1  # Win Condition
-    print(wins)
-    return wins
-
-
-def simulate(
-    player_hand: Hand,
-    num_opponents: int,
     stage: int,
     board: List[int],
     trials=10,
@@ -108,12 +74,14 @@ def main():
     n = 10000
 
     wins = simulate(player_hand, num_opponents, stage, board, trials, n)
+    print(wins)
 
     plt.hist(wins, bins=np.arange(min(wins), max(wins) + 2) - 0.5, edgecolor="black")
     plt.xlabel("# of wins")
     plt.ylabel("Frequency")
     plt.title("Expected number of wins per 100 hands")
     plt.show()
+    
 
 
 if __name__ == "__main__":
