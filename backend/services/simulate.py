@@ -46,9 +46,11 @@ def simulate(
         for opponent in opponents:
             opponent_score = evaluator.evaluate(current_board, opponent.cards)
 
+            win = True
             if opponent_score < player_score:
+                win = False
                 break
-
+        if win:
             wins += 1  # Win Condition
 
     return wins / trials
