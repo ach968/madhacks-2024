@@ -33,6 +33,7 @@ def single_trial(player_hand: Hand, num_opponents: int, stage: int, board: List[
                 break
         if win:
             wins += 1  # Win Condition
+    print(wins)
     return wins
 
 def simulate(player_hand: Hand, num_opponents: int, stage: int, board: List[int], trials=10, n=1000):
@@ -47,12 +48,12 @@ def simulate(player_hand: Hand, num_opponents: int, stage: int, board: List[int]
     return results
 
 def main():
-    player_hand = Hand([Card.new("As"), Card.new("Ks")])
-    board = [Card.new("2h"), Card.new("7d"), Card.new("9c")]
+    player_hand = Hand([Card.new("As"), Card.new("2s")])
+    board = [Card.new("Ac"), Card.new("Ad"), Card.new("8d")]
     num_opponents = 3
     stage = 3
     trials = 100
-    n = 1000
+    n = 10000
 
     wins = simulate(player_hand, num_opponents, stage, board, trials, n)
 
