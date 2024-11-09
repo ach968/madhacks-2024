@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 flask = "*"
 treys = "*"
+matplotlib = "*"
+multiprocess = "*"
 
 [dev-packages]
 
