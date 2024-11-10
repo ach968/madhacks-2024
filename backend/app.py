@@ -1,21 +1,24 @@
 from flask import Flask, request, jsonify
-from treys import Card
-from services.simulate import Hand, sim_stats, get_initial_guess
 from flask_cors import CORS
+from treys import Card
+import os
+from services.simulate import Hand, sim_stats, get_initial_guess
 
 app = Flask(__name__)
 CORS(
     app,
-    resources={
-        r"/api/*": {
-            "origins": ["http://localhost:5173", "https://madhacks-2024.vercel.app"]
-        }
-    },
+    resources={r"/api/*": {"origins": ["http://localhost:5173", "https://madhacks-2024.vercel.app"]}},
     supports_credentials=True,
 )
+@app.route("/")
+def home():
+    return jsonify({"message": "Hello"})
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
-@app.route("/api/simulate", methods=["POST"])
+@app.route("/api/simulate", methods=["POST", "GET"])
 def api_simulate():
     if request.method != "POST":
         return jsonify({"message": "This is a POST endpoint"})
@@ -40,7 +43,7 @@ def api_simulate():
             board=board,
             risk=risk,
             trials=100,
-            n=2500,
+            n=1000,
         )
 
         return jsonify(
@@ -55,6 +58,6 @@ def api_simulate():
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
-
 if __name__ == "__main__":
-    app.run(debug=False)
+    port = int(os.environ.get("PORT", 5000))  # Use the port provided by Heroku
+    app.run(host="0.0.0.0", port=port)

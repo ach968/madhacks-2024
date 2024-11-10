@@ -3,14 +3,21 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[[source]]
+url = "https://download.pytorch.org/whl/cpu"
+verify_ssl = true
+name = "pytorch"
+
 [packages]
 flask = "*"
 treys = "*"
 matplotlib = "*"
 multiprocess = "*"
 scipy = "*"
+gunicorn = "*"
+torch = {version = "==2.1.1", index = "pytorch"}
 flask-cors = "*"
-torch = "*"
+numpy = "==1.24.4"
 
 [dev-packages]
 
