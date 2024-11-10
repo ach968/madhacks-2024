@@ -1,19 +1,19 @@
-# Statistics Driven Poker Simulation Tool
+# Statistics-Driven Poker Simulation Tool
+A data-driven poker tool that utilizes Monte Carlo simulations to predict game outcomes and suggest optimal play strategies.
 
-Data-driven poker tool using Monte-Carlo simulation of game outcomes. 
+# Overview
+This tool models poker game states as binomial distributions, approximated through normal distributions due to a high number of trials. It compares a player’s hand against opponents’ hands, factoring in the current board, to determine winning hands. The calculated mean and standard deviation for these outcomes are sent to the frontend for visualization.
 
-## Idea
+# AI Model
+An AI-driven neural network, built with PyTorch, predicts the optimal betting strategy for each game state—raising, checking, or folding—based on a player's specified risk tolerance. This risk factor (1 for high-risk tolerance, 0 for highly conservative play) influences the model’s approach: a higher risk tolerance encourages the network to be more lenient with aggressive bets that might result in a loss, while penalizing minimal bets on likely wins. While we considered using a genetic algorithm to evaluate game states beyond just win percentages, time constraints limited us to a simpler model.
 
-We modeled each game state as a binomial distribution that can be approximated through a normal distribution due to a large number of trials. We compared the player's hand to each of the opponents' hands in relation to the current board in order to determine wins, and calculated the mean and standard deviation. We sent this data to the frontend to be plotted.
+# Tech Stack
+- Backend: Python with Flask
+- Frontend: JavaScript and React, built with Vite
+- Hosting: Frontend on Vercel, Backend on Heroku
+- Data Visualization: Dynamic plotting on the frontend, leveraging statistical outputs from the backend simulations
+- Note: No database was used for this project.
 
-## AI Model
+# Challenges
+The main hurdle was limited computing power. Without a GPU on the backend, parallelizing simulations was not feasible. We compensated by running fewer simulations, which extended processing times but allowed us to gather meaningful data within our constraints.
 
-We constructed a data-driven neural network using PyTorch in order to predict the optimal amount to raise (or whether to check/fold) for each game state. The basic concept is as follows: based on a risk tolerance factor specified by the player, (1 being very open to taking risks and 0 being very conservative) and its calculated win percentage, the network guesses how much to raise. The higher the risk tolerance factor, the less it is punished for raising a lot on a loss, but more for checking or raising very little on a win. We wanted to model this with a genetic algorithm based on the entire game state instead of just the win percentage, but with only 24 hours, this proved difficult.
-
-## Stack
-
-We used Python and Flask for the backend and Vite, JavaScript, and React for the frontend. There was no database involved. We hosted the frontend on Vercel and the backend on Heroku.
-
-## Challenges
-
-Our main challenge was computing power. Since we didn't have access to a GPU on the backend, parallelizing the simulations wasn't possible, so we had to settle for longer computing times and a smaller number of simulations.
