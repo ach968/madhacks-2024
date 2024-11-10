@@ -310,13 +310,18 @@ export default function PokerSimulator() {
             bgcolor: "background.paper",
           }}
         >
-          {simulationResults?.optimal_raise && (
+          {simulationResults && simulationResults.optimal_raise > 0 ? (
             <Typography>
-              AI driven analysis: You should raise{" "}
-              {simulationResults.optimal_raise.toFixed(2)}% of your bankroll on
-              this game.
+              AI driven recommendation: You should raise{" "}
+              {(simulationResults.optimal_raise * 100).toFixed(2)}% of your
+              bankroll on this game.
             </Typography>
-          )}
+          ) : simulationResults ? (
+            <Typography>
+              AI Driven recommendation: You should check through or fold this
+              game.
+            </Typography>
+          ) : null}
         </Box>
       </Box>
     </ThemeProvider>
