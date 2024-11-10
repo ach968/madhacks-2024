@@ -313,8 +313,8 @@ export default function PokerSimulator() {
           {simulationResults && simulationResults.optimal_raise > 0 ? (
             <Typography>
               AI driven recommendation: You should raise{" "}
-              {(simulationResults.optimal_raise * 100).toFixed(2)}% of your
-              bankroll on this game.
+              {simulationResults.optimal_raise.toFixed(2)}% of your bankroll on
+              this game.
             </Typography>
           ) : simulationResults ? (
             <Typography>
