@@ -8,6 +8,7 @@ flask = "*"
 treys = "*"
 matplotlib = "*"
 multiprocess = "*"
+scipy = "*"
 
 [dev-packages]
 
