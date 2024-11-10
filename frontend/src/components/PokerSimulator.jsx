@@ -76,12 +76,12 @@ export default function PokerSimulator() {
   const [isSimulating, setIsSimulating] = useState(false);
 
   const handleClearBoard = () => {
-    const updatedSelectedCards = { 
+    const updatedSelectedCards = {
       ...selectedCards,
-      board: [null, null, null, null, null]
+      board: [null, null, null, null, null],
     };
     setSelectedCards(updatedSelectedCards);
-    
+
     // Update disabled cards to only include input cards
     const newDisabledCards = updatedSelectedCards.input
       .filter((c) => c)
@@ -309,7 +309,14 @@ export default function PokerSimulator() {
             p: 3,
             bgcolor: "background.paper",
           }}
-        ></Box>
+        >
+          {simulationResults?.optimal_raise && (
+            <Typography>
+              You should raise {simulationResults.optimal_raise.toFixed(2)}% of
+              your bankroll on this game.
+            </Typography>
+          )}
+        </Box>
       </Box>
     </ThemeProvider>
   );
