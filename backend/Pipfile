@@ -9,6 +9,7 @@ treys = "*"
 matplotlib = "*"
 multiprocess = "*"
 scipy = "*"
+flask-cors = "*"
 
 [dev-packages]
 
