@@ -2,15 +2,15 @@ FROM python:3.10-slim
 
 RUN pip install --upgrade pip && pip install pipenv
 
-WORKDIR /mysterious-savannah-38599
+WORKDIR /backend
 
-COPY Pipfile* /mysterious-savannah-38599
+COPY Pipfile* /backend
 
 RUN pipenv install --deploy --ignore-pipfile
 
-COPY . /mysterious-savannah-38599
+COPY . /backend
 
-RUN useradd -m myuser && chown -R myuser /mysterious-savannah-38599
+RUN useradd -m myuser && chown -R myuser /backend
 USER myuser
 
 CMD ["pipenv", "run", "python", "app.py"]
