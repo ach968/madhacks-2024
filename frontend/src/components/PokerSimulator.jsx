@@ -11,7 +11,7 @@ import Chart from "./Chart";
 import Board from "./Board";
 import "@fontsource/poppins";
 import "@fontsource/jetbrains-mono";
-import axiosInstance from "../../axiosInstance.js"; // Add this import
+import axiosInstance from "../../axiosInstance.js";
 
 const theme = createTheme({
   typography: {
@@ -60,8 +60,8 @@ export default function PokerSimulator() {
   // Disabled cards array based on selected cards
   const [disabledCards, setDisabledCards] = useState([]);
 
-  // State for player count and risk tolerance
-  const [playerCount, setPlayerCount] = useState(1);
+  // State for opponent count and risk tolerance
+  const [opponentCount, setopponentCount] = useState(1);
   const [riskTolerance, setRiskTolerance] = useState(0);
 
   // Add board dialog state and handlers
@@ -74,6 +74,20 @@ export default function PokerSimulator() {
   // Add simulation state
   const [simulationResults, setSimulationResults] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
+
+  const handleClearBoard = () => {
+    const updatedSelectedCards = { 
+      ...selectedCards,
+      board: [null, null, null, null, null]
+    };
+    setSelectedCards(updatedSelectedCards);
+    
+    // Update disabled cards to only include input cards
+    const newDisabledCards = updatedSelectedCards.input
+      .filter((c) => c)
+      .map((c) => `${c.rank}_${c.suit}`);
+    setDisabledCards(newDisabledCards);
+  };
 
   // Update selected cards and disabled cards whenever a card is selected
   const handleCardSelect = (source, index, card) => {
@@ -92,9 +106,9 @@ export default function PokerSimulator() {
     setDisabledCards(newDisabledCards);
   };
 
-  // Handlers for player count and risk tolerance
-  const handlePlayerCountChange = (count) => {
-    setPlayerCount(count);
+  // Handlers for opponent count and risk tolerance
+  const handleopponentCountChange = (count) => {
+    setopponentCount(count);
   };
 
   const handleRiskToleranceChange = (value) => {
@@ -127,7 +141,6 @@ export default function PokerSimulator() {
       return;
     }
 
-    // Add board validation
     if (boardCards.length > 0 && boardCards.length < 3) {
       alert(
         "If adding community cards, you must select at least 3 cards (the flop)"
@@ -136,19 +149,43 @@ export default function PokerSimulator() {
     }
 
     setIsSimulating(true);
+    setSimulationResults(null); // Reset previous results
+
     try {
       const response = await axiosInstance.post("/simulate", {
+        stage: boardCards.length,
+        num_opponents: opponentCount,
         player_hand: playerCards,
         board: boardCards,
-        num_opponents: playerCount - 1,
-        stage: boardCards.length,
         risk_tolerance: riskTolerance,
       });
-      console.log("Simulation results:", response.data);
-      setSimulationResults(response.data);
+
+      console.log("API Response:", response); // Debug log
+      console.log("Response data:", response.data); // Debug log
+
+      // Make sure we're setting the simulation results with the correct data structure
+      if (
+        response.data &&
+        typeof response.data.win_pct === "number" &&
+        typeof response.data.sd === "number"
+      ) {
+        setSimulationResults({
+          win_pct: response.data.win_pct,
+          sd: response.data.sd,
+          breakeven_pct: response.data.breakeven_pct,
+          optimal_raise: response.data.optimal_raise,
+        });
+      } else {
+        console.error("Invalid response format:", response.data);
+        alert("Invalid response format from server");
+      }
     } catch (error) {
       console.error("Simulation failed:", error);
-      alert("Failed to simulate hand");
+      console.error("Error response:", error.response); // Debug log
+      alert(
+        "Failed to simulate hand: " +
+          (error.response?.data?.message || error.message)
+      );
     } finally {
       setIsSimulating(false);
     }
@@ -167,15 +204,28 @@ export default function PokerSimulator() {
           alignItems: "center",
           justifyContent: "flex-start",
           margin: "auto",
-          p: 3,
+          p: 2,
         }}
       >
+        <Typography
+          sx={{
+            fontSize: 32,
+            marginBottom: 6,
+            marginTop: -4,
+            fontStyle: "italic",
+            fontWeight: 1000,
+            fontFamily: "sans-serif",
+          }}
+        >
+          Poker Simulation - A Mathematical Approach
+        </Typography>
+
         <Box
           sx={{
             display: "flex",
             width: "85%",
-            gap: 3,
-            mb: 3,
+            gap: 0, // Changed from 2.5 to 1
+            mb: 2.5,
             justifyContent: "space-between",
             alignItems: "flex-start",
             height: "100%",
@@ -189,8 +239,8 @@ export default function PokerSimulator() {
               onCardSelect={(index, card) =>
                 handleCardSelect("input", index, card)
               }
-              playerCount={playerCount}
-              onPlayerCountChange={handlePlayerCountChange}
+              opponentCount={opponentCount}
+              onopponentCountChange={handleopponentCountChange}
               riskTolerance={riskTolerance}
               onRiskToleranceChange={handleRiskToleranceChange}
               onSimulate={handleSimulate}
@@ -204,19 +254,27 @@ export default function PokerSimulator() {
               flex: "0 1 55%",
               display: "flex",
               flexDirection: "column",
-              gap: 1.5,
+              gap: 1,
             }}
           >
             {/* Chart */}
             <Box sx={{ flex: "1 0 auto" }}>
-              <Chart />
+              <Chart simulationResults={simulationResults} />
             </Box>
 
             {/* Board */}
             <Box sx={{ flex: "0 0 auto" }}>
               <Typography
                 variant="h6"
-                sx={{ textAlign: "center", width: "100%", marginBottom: 2 }}
+                sx={{
+                  textAlign: "center",
+                  width: "100%",
+                  marginBottom: 2,
+                  fontWeight: 1000,
+                  fontSize: "1.3rem",
+                  fontFamily: "Roboto, sans-serif",
+                  fontStyle: "italic",
+                }}
                 gutterBottom
               >
                 Community Board
@@ -232,6 +290,7 @@ export default function PokerSimulator() {
                 onOpenDialog={handleBoardDialogOpen}
                 onCloseDialog={handleBoardDialogClose}
                 onSuitSelect={handleBoardSuitSelect}
+                onClearBoard={handleClearBoard}
               />
             </Box>
           </Box>

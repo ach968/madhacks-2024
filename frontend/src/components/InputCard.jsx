@@ -36,8 +36,8 @@ export default function InputCard({
   selectedCards,
   disabledCards,
   onCardSelect,
-  playerCount,
-  onPlayerCountChange,
+  opponentCount,
+  onopponentCountChange,
   riskTolerance,
   onRiskToleranceChange,
   onSimulate,
@@ -66,23 +66,34 @@ export default function InputCard({
   };
 
   const incrementPlayers = () =>
-    onPlayerCountChange(Math.min(playerCount + 1, 10));
+    onopponentCountChange(Math.min(opponentCount + 1, 9));
   const decrementPlayers = () =>
-    onPlayerCountChange(Math.max(playerCount - 1, 1));
+    onopponentCountChange(Math.max(opponentCount - 1, 1));
 
   return (
     <Box
       sx={{
-        width: "85%",
-        bgcolor: "grey.400",
+        width: "100%",
+        bgcolor: "grey.200",
         p: 3,
         borderRadius: 2,
         justifyItems: "center",
       }}
     >
-      <Typography variant="h5" gutterBottom>
-        {" "}
-        Poker Hand Input{" "}
+      <Typography
+        variant="h5"
+        sx={{
+          textAlign: "center",
+          width: "100%",
+          marginBottom: 2,
+          fontWeight: 1000,
+          fontSize: 20,
+          fontStyle: "italic",
+          fontFamily: "Roboto, sans-serif",
+        }}
+        gutterBottom
+      >
+        Poker Hand Input
       </Typography>
 
       {/* Card Selector Section */}
@@ -92,8 +103,8 @@ export default function InputCard({
             key={index}
             onClick={() => openCardDialog(index)}
             sx={{
-              width: 70,
-              height: 97.5,
+              width: 90,
+              height: 122,
               bgcolor: card?.image ? "transparent" : "grey.700",
               display: "flex",
               alignItems: "center",
@@ -115,7 +126,7 @@ export default function InputCard({
         ))}
       </Box>
 
-      {/* Player Counter Section */}
+      {/* opponent counter Section */}
       <Box
         sx={{
           display: "flex",
@@ -124,28 +135,30 @@ export default function InputCard({
           mb: 2,
         }}
       >
-        <Typography sx={{ marginRight: 1 }}>Player Count</Typography>
+        <Typography sx={{ marginRight: 1 }}>Opponent Count: </Typography>
         <TextField
           variant="outlined"
           type="number"
-          value={playerCount}
+          value={opponentCount}
           onChange={(e) =>
-            onPlayerCountChange(Math.max(1, Math.min(10, Number(e.target.value))))
+            onopponentCountChange(
+              Math.max(1, Math.min(9, Number(e.target.value)))
+            )
           }
-          inputProps={{ min: 1, max: 10, style: { textAlign: "center" } }}
+          inputProps={{ min: 1, max: 9, style: { textAlign: "center" } }}
           sx={{ width: 80 }}
         />
         <IconButton
           onClick={decrementPlayers}
           color="primary"
-          disabled={playerCount <= 1}
+          disabled={opponentCount <= 1}
         >
           <RemoveIcon />
         </IconButton>
         <IconButton
           onClick={incrementPlayers}
           color="primary"
-          disabled={playerCount >= 10}
+          disabled={opponentCount >= 9}
         >
           <AddIcon />
         </IconButton>
@@ -175,17 +188,17 @@ export default function InputCard({
           gap: 1.5,
         }}
       >
-        <Button 
-          variant="contained" 
-          color="primary" 
-          sx={{ width: "80%" }}
+        <Button
+          variant="contained"
+          color="info"
+          sx={{ width: "95%" }}
           onClick={onSimulate}
           disabled={isSimulating}
         >
           {isSimulating ? "Simulating..." : "Simulate"}
         </Button>
-        <Button variant="contained" color="primary" sx={{ width: "80%" }}>
-          Random Simulation
+        <Button variant="contained" color="lightblue" sx={{ width: "95%" }}>
+          Random
         </Button>
       </Box>
 

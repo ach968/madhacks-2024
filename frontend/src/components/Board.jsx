@@ -35,7 +35,8 @@ export default function Board({
   selectedSuit,
   onOpenDialog,
   onCloseDialog,
-  onSuitSelect
+  onSuitSelect,
+  onClearBoard // Add this new prop
 }) {
   const handleCardSelect = (rank) => {
     if (selectedSuit) {
@@ -57,67 +58,79 @@ export default function Board({
   };
 
   return (
-    <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mb: 2 }}>
-      {selectedCards.map((card, index) => (
-        <Box
-          key={index}
-          onClick={() => !isCardSlotDisabled(index) && onOpenDialog(index)}
-          sx={{
-            width: 80,
-            height: 112,
-            bgcolor: card?.image ? "transparent" : "grey.700",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: card?.image ? 0 : 1,
-            cursor: isCardSlotDisabled(index) ? "not-allowed" : "pointer",
-            backgroundImage: card?.image ? `url(${card.image})` : "none",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            opacity: isCardSlotDisabled(index) ? 0.5 : 1,
-            "&:hover": { transform: isCardSlotDisabled(index) ? "none" : "scale(1.05)" },
-            // Add visual grouping for flop cards
-            border: index < 3 ? "2px solid #4caf50" : "none",
-            position: "relative",
-          }}
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+        <Button
+          variant="outlined"
+          color="error"
+          size="small"
+          onClick={onClearBoard}
+          sx={{ fontSize: '0.75rem' }}
         >
-          {!card && (
-            <Typography 
-              variant="h6" 
-              color="white"
-              sx={{ 
-                opacity: isCardSlotDisabled(index) ? 0.5 : 1 
-              }}
-            >
-              +
-            </Typography>
-          )}
-          {/* Add labels for turn and river */}
-          {!card && index === 3 && (
-            <Typography
-              sx={{
-                position: "absolute",
-                bottom: -20,
-                fontSize: "0.8rem",
-              }}
-            >
-              Turn
-            </Typography>
-          )}
-          {!card && index === 4 && (
-            <Typography
-              sx={{
-                position: "absolute",
-                bottom: -20,
-                fontSize: "0.8rem",
-              }}
-            >
-              River
-            </Typography>
-          )}
-        </Box>
-      ))}
-
+          Clear Board
+        </Button>
+      </Box>
+      <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mb: 2 }}>
+        {selectedCards.map((card, index) => (
+          <Box
+            key={index}
+            onClick={() => !isCardSlotDisabled(index) && onOpenDialog(index)}
+            sx={{
+              width: 85,
+              height: 117,
+              bgcolor: card?.image ? "transparent" : "grey.700",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: card?.image ? 0 : 1,
+              cursor: isCardSlotDisabled(index) ? "not-allowed" : "pointer",
+              backgroundImage: card?.image ? `url(${card.image})` : "none",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: isCardSlotDisabled(index) ? 0.5 : 1,
+              "&:hover": { transform: isCardSlotDisabled(index) ? "none" : "scale(1.05)" },
+              // Add visual grouping for flop cards
+              border: index < 3 ? "2px solid #4caf50" : "none",
+              position: "relative",
+            }}
+          >
+            {!card && (
+              <Typography 
+                variant="h6" 
+                color="white"
+                sx={{ 
+                  opacity: isCardSlotDisabled(index) ? 0.5 : 1 
+                }}
+              >
+                +
+              </Typography>
+            )}
+            {/* Add labels for turn and river */}
+            {!card && index === 3 && (
+              <Typography
+                sx={{
+                  position: "absolute",
+                  bottom: -20,
+                  fontSize: "0.8rem",
+                }}
+              >
+                Turn
+              </Typography>
+            )}
+            {!card && index === 4 && (
+              <Typography
+                sx={{
+                  position: "absolute",
+                  bottom: -20,
+                  fontSize: "0.8rem",
+                }}
+              >
+                River
+              </Typography>
+            )}
+          </Box>
+        ))}
+      </Box>
       <Dialog open={openDialog.open} onClose={onCloseDialog}>
         <DialogTitle>Select Card</DialogTitle>
         <DialogContent>
