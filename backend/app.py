@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
+from flask_executor import Executor
 from treys import Card
-from services.simulate import Hand, simulate
-from flask_cors import CORS
+from services.simulate import Hand, sim_stats, get_initial_guess
 
 app = Flask(__name__)
 CORS(
@@ -10,36 +10,26 @@ CORS(
     supports_credentials=True,
 )
 
-
 @app.route("/api/simulate", methods=["POST", "GET"])
 def api_simulate():
-    if request.method != "POST":
-        return jsonify({"message": "This is a POST endpoint"})
-    if request.method == "POST":
-        try:
-            data = request.json
-            player_hand = Hand(
-                cards=[
-                    Card.new(data["player_hand"][0]),
-                    Card.new(data["player_hand"][1]),
-                ]
-            )
+    if request.method != "GET":
+        return jsonify({"message": "This is a GET endpoint"})
+    if request.method == "GET":
+        data = request.json
+        player_hand = Hand(
+            cards=[Card.new(data["player_hand"][0]), Card.new(data["player_hand"][1])]
+        )
+        stage = data["stage"]
+        if not data["board"]:
+            board = []
+        else:
             board = [Card.new(card) for card in data["board"]]
-            num_opponents = data["num_opponents"]
-            stage = data["stage"]
-            risk_tolerance = data["risk_tolerance"]
-            simulate_result = simulate(
-                player_hand=player_hand,
-                num_opponents=num_opponents,
-                board=board,
-                stage=stage,
-                risk_tolerance=risk_tolerance,
-            )
-        except Exception as e:
-            return jsonify({"error": str(e)})
-
-    return jsonify(data)
-
+        risk = data["risk"]
+        num_opponents = data["num_opponents"]
+        mean, sd, breakeven, optimal_raise = sim_stats(
+            player_hand=player_hand, num_opponents=num_opponents, stage=stage, board=board, risk=risk
+        )
+    return jsonify({"win_pct": mean, "sd": sd, "breakeven_pct": breakeven, "optimal_raise": optimal_raise})
 
 if __name__ == "__main__":
     app.run(debug=True)
