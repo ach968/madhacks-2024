@@ -10,7 +10,6 @@ matplotlib = "*"
 multiprocess = "*"
 scipy = "*"
 torch = "*"
-flask-executor = "*"
 
 [dev-packages]
 

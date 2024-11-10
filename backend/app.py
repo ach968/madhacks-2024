@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_executor import Executor
 from treys import Card
 from services.simulate import Hand, sim_stats, get_initial_guess
 
@@ -27,4 +26,4 @@ def api_simulate():
     return jsonify({"win_pct": mean, "sd": sd, "breakeven_pct": breakeven, "optimal_raise": optimal_raise})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
