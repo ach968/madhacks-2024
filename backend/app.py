@@ -3,6 +3,11 @@ from treys import Card
 from services.simulate import Hand, sim_stats, get_initial_guess
 
 app = Flask(__name__)
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    supports_credentials=True,
+)
 
 @app.route("/api/simulate", methods=["POST", "GET"])
 def api_simulate():
