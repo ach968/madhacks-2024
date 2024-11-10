@@ -197,9 +197,6 @@ export default function InputCard({
         >
           {isSimulating ? "Simulating..." : "Simulate"}
         </Button>
-        <Button variant="contained" color="lightblue" sx={{ width: "95%" }}>
-          Random
-        </Button>
       </Box>
 
       {/* Card Selection Dialog */}
